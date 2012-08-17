@@ -30,3 +30,22 @@ Note that multiple instances of some of these parts may exist. In particular, Co
 DETAILED BEHAVIOUR
 =====
 This section describes the behaviour of each part in detail. Since this is the most natural way to describe Erlang apps, this description mostly consists of reactions to incoming messages.
+
+Supervisor
+-----
+ * Startup
+  * Launches a Storage process
+  * Lanuches a Configuration process
+  * Retrieves the configuration for all Component instances that shall be started (in general, one transport shall be started for each foreign domain)
+  * Launches Component instances
+ * Storage dies
+  * If the reason is a shutdown, ignore it
+  * Otherwise, launch a new Storage instance and propagate its Pid to the Configuration instance and all Components
+ * Configuration dies
+  * If the reason is a shutdown, ignore it
+  * Otherwise, aunch a new Configuration instance and propagate its Pid to all Components
+ * Shutdown
+  * Send shutdown signals to all Components and the Configuration and Storage processes
+
+Storage
+-----
